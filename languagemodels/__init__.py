@@ -2,8 +2,13 @@ import requests
 import datetime
 import json
 
-from languagemodels.models import set_max_ram
-from languagemodels.inference import generate_instruct, parse_chat, list_tokens
+from languagemodels.models import set_max_ram, require_model_license
+from languagemodels.inference import (
+    generate_instruct,
+    rank_instruct,
+    parse_chat,
+    list_tokens,
+)
 from languagemodels.embeddings import RetrievalContext
 
 docs = RetrievalContext()
@@ -101,13 +106,13 @@ def chat(prompt: str) -> str:
     Examples:
 
     >>> chat('''
-    ...      System: Respond as a helpful assistant. It is 5:15pm.
+    ...      System: Respond as a helpful assistant. It is 5:00pm.
     ...
     ...      User: What time is it?
     ...
     ...      Assistant:
     ...      ''')
-    '...5:15pm...'
+    '...5:00pm...'
     """
 
     messages = parse_chat(prompt)
@@ -205,11 +210,11 @@ def classify(doc: str, label1: str, label2: str) -> str:
     'ocean'
     """
 
-    result = generate_instruct(
-        f"Classify as {label1} or {label2}: {doc}\n\nClassification:", max_tokens=5
+    results = rank_instruct(
+        f"Classify as {label1} or {label2}: {doc}\n\nClassification:", [label1, label2]
     )
 
-    return result.lower().rstrip(".")
+    return results[0]
 
 
 def store_doc(doc: str, name: str = "") -> None:

@@ -5,7 +5,7 @@ with open("readme.md", "r") as fh:
 
 setuptools.setup(
     name="languagemodels",
-    version="0.5.0",
+    version="0.6.0",
     author="Jon Craton",
     author_email="jon@joncraton.com",
     description="Simple inference for large language models",
@@ -20,7 +20,6 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        "sentencepiece",
         "huggingface_hub",
         "ctranslate2>=3.15.0",
         "tokenizers",

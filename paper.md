@@ -52,13 +52,13 @@ This package eliminates boilerplate and configuration options that are meaningle
 >>> lm.extract_answer("What color is the ball?", "There is a green ball and a red box")
 'green'
 
->>> lm.store_doc("Mars is a planet")
->>> lm.store_doc("The sun is hot")
->>> lm.load_doc("What is Mars?")
-'Mars is a planet'
-
 >>> lm.get_wiki('Chemistry')
 'Chemistry is the scientific study...'
+
+>>> lm.store_doc(lm.get_wiki("Python"), "Python")
+>>> lm.store_doc(lm.get_wiki("Javascript"), "Javascript")
+>>> lm.get_doc_context("What does it mean for batteries to be included in a language?")
+'Python: It is often described as a "batteries included" language due to its comprehensive standard library...
 ```
 
 # Features
@@ -69,7 +69,7 @@ Despite its simplicity, this package provides a number of building blocks that c
 - Instruction following with the `do` function
 - Chat-style inference using `chat` function
 - Zero-shot classification with the `classify` function
-- Semantic search via a document store using the `store_doc` and `load_doc` functions
+- Semantic search via a document store using the `store_doc` and `get_doc_context` functions
 - Extractive question answering using the `extract_answer` function
 - Basic web retrieval using the `get_wiki` function
 
@@ -85,7 +85,7 @@ The package includes the following features under the hood
 
 The design of this software package allows its internals to be loosely coupled to the models and inference engines it uses. At the time of writing, rapid progress is being made to speed up inference on consumer hardware, but much of this software is difficult to install and may not work well for all learners.
 
-This package currently uses the HuggingFace Transformers library [@hftransformers], which internally uses PyTorch [@pytorch] for inference. The main model used is a variant of the T5 base model [@t5] that has been fine-tuned to better follow instructions [@flan-t5]. Models that focus on inference efficiency are starting to become available [@llama]. It will be possible to replace the internals of this package with more powerful and efficient models in the future. In addition to simple local inference, it is also possible to provide API keys to the package to allow access to more powerful hosted inference services.
+This package currently uses the Hugging Face Transformers library [@hftransformers], which internally uses PyTorch [@pytorch] for inference. The main model used is a variant of the T5 base model [@t5] that has been fine-tuned to better follow instructions [@flan-t5]. Models that focus on inference efficiency are starting to become available [@llama]. It will be possible to replace the internals of this package with more powerful and efficient models in the future. In addition to simple local inference, it is also possible to provide API keys to the package to allow access to more powerful hosted inference services.
 
 # Future work
 

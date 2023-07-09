@@ -112,29 +112,29 @@ Semantic search is provided to retrieve documents that may provide helpful conte
 
 ```python
 >>> import languagemodels as lm
-
->>> lm.store_doc("Mars is a planet")
->>> lm.store_doc("The sun is hot")
->>> lm.load_doc("What is Mars?")
-'Mars is a planet'
-```
-
-This can also be used to get a blend of context from stored documents:
-
-```python
->>> import languagemodels as lm
 >>> lm.store_doc(lm.get_wiki("Python"), "Python")
 >>> lm.store_doc(lm.get_wiki("C language"), "C")
 >>> lm.store_doc(lm.get_wiki("Javascript"), "Javascript")
 >>> lm.get_doc_context("What does it mean for batteries to be included in a language?")
-'Python: It is often described as a "batteries included" language due to its comprehensive standard library.Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language and first released it in 1991 as Python 0.9.
+'From Python document: It is often described as a "batteries included" language due to its comprehensive standard library.Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language and first released it in 1991 as Python 0.9.
 
-C: It was designed to be compiled to provide low-level access to memory and language constructs that map efficiently to machine instructions, all with minimal runtime support.
-
-C: The book The C Programming Language, co-authored by the original language designer, served for many years as the de facto standard for the language.'
+From C document: It was designed to be compiled to provide low-level access to memory and language constructs that map efficiently to machine instructions, all with minimal runtime support.'
 ```
 
-### Performance
+[Full documentation](https://languagemodels.netlify.app/)
+
+### Speed
+
+This package currently outperforms Hugging Face `transformers` for CPU inference thanks to int8 quantization and the [CTranslate2](https://github.com/OpenNMT/CTranslate2) backend. The following table compares CPU inference performance on identical models using the best available quantization on a 20 question test set.
+
+| Backend                  | Inference Time | Memory Used |
+|--------------------------|----------------|-------------|
+| HuggingFace transformers | 22s            | 1.77GB      |
+| This package             | 11s            | 0.34GB      |
+
+Note that quantization does technically harm output quality slightly, but it should be negligible at this level.
+
+### Generation Quality
 
 The models used by this package are 1000x smaller than the largest models in use today. They are useful as learning tools, but if you are expecting ChatGPT or similar performance, you will be very disappointed.
 
@@ -150,20 +150,33 @@ The base model should work on any system with 512MB of memory, but this memory l
 'I have 2 apples left.'
 ```
 
-[Full documentation](https://languagemodels.netlify.app/)
+This pacakge currently uses [LaMini-Flan-T5-base](https://huggingface.co/MBZUAI/LaMini-Flan-T5-223M) as its default model. This is a fine-tuning of the T5 base model on top of the [FLAN](https://huggingface.co/google/flan-t5-base) fine-tuning provided by Google. The model is tuned to respond to instructions in a human-like manner. The following human evaluations were reported in the [paper](https://github.com/mbzuai-nlp/LaMini-LM) associated with this model family:
 
-Advanced Usage
+![Human-rated model comparison](media/model-comparison.png)
+
+Commercial Use
 --------------
 
-This package is not meant for advanced usage. If you are looking for something more powerful you could explore [transformers](https://huggingface.co/docs/transformers) from Hugging Face. For integrating language models in more complex ways, [LangChain](https://github.com/hwchase17/langchain) or [guidance](https://github.com/microsoft/guidance) may be helpful.
+This package itself is licensed for commerical use, but the models used may not be compatible with commercial use. In order to use this package commercially, you may want to filter models by their license type using the `require_model_license` function.
+
+```python
+>>> import languagemodels as lm
+>>> lm.do("What is your favorite animal.")
+>>> "As an AI language model, I don't have preferences or emotions."
+>>> lm.require_model_license("apache.*|mit")
+>>> lm.do("What is your favorite animal.")
+'Lion.'
+```
+
+The commercially-licensed models may not perform as well as the default models. It is recommended to confirm that the models used do meet the licensing requirements for your software.
 
 Projects Ideas
 --------------
 
 This package can be used to do the heavy lifting for a number of learning projects:
 
-- CLI Chatbot (see examples/chat.py)
-- Streamlit chatbot (see examples/streamlitchat.py)
+- CLI Chatbot (see [examples/chat.py](examples/chat.py))
+- Streamlit chatbot (see [examples/streamlitchat.py](examples/streamlitchat.py))
 - Chatbot with information retrieval
 - Chatbot with access to real-time information
 - Tool use
@@ -173,10 +186,3 @@ This package can be used to do the heavy lifting for a number of learning projec
 - Document question answering
 
 Several example programs and notebooks are included in the `examples` directory.
-
-Attribution
------------
-
-- [CTranslate2](https://github.com/OpenNMT/CTranslate2)
-- [LaMini-Flan-T5](https://huggingface.co/MBZUAI/LaMini-Flan-T5-783M)
-- [Flan-T5](https://huggingface.co/google/flan-t5-large)
